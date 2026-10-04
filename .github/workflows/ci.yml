@@ -1,0 +1,35 @@
+name: 第一次自动化检查
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 打个招呼
+        run: |
+          echo "仓库已成功拉取"
+          echo "触发者: ${{ github.actor }}"
+          echo "分支: ${{ github.ref_name }}"
+
+      - name: 看看仓库里有什么
+        run: |
+          ls -la
+          echo "---"
+          echo "文件总数: $(find . -type f -not -path './.git/*' | wc -l)"
+
+      - name: 检查 README 是否存在
+        run: |
+          if [ -f README.md ]; then
+            echo "README.md 存在，检查通过"
+          else
+            echo "缺少 README.md"
+            exit 1
+          fi
